@@ -3,7 +3,7 @@
 
 # Meson build system definitions with the Linux ncurses port as the default.
 
-project('nethack', 'c')
+project('nethack', 'c', 'cpp')
 
 hackdir = join_paths('/',
                      get_option('localstatedir'),
@@ -21,7 +21,7 @@ if not meson.is_cross_build()
 	                     '-DSECURE',
 	                     '-DSYSCF',
 	                     '-DSYSCF_FILE="@0@/sysconf"'.format(hackdir),
-	                     language: 'c')
+	                     language: ['c', 'cpp'])
 endif
 
 ncurses_win_srcs = [
@@ -50,21 +50,19 @@ add_global_arguments('-DMESON',
                      '-DTIMED_DELAY',
                      '-DHACKDIR="@0@"'.format(hackdir),
                      '-DCONFIG_ERROR_SECURE=FALSE',
-                     language: 'c')
+                     language: ['c', 'cpp'])
 
 add_global_arguments('-DMESON',
                      '-DNOTPARMDECL',
                      '-DDLB',
-                     language: 'c',
+                     language: ['c', 'cpp'],
                      native: true)
 
-if target_machine.system() == 'windows'
-	add_languages('cpp')
-else
+if not meson.is_cross_build()
 	gdb = find_program('gdb', required: false)
 	if gdb.found()
 		add_global_arguments('-DDUMPLOG',
-		                     language: 'c')
+		                     language: ['c', 'cpp'])
 	endif
 endif
 
