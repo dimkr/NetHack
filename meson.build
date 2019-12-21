@@ -1,41 +1,79 @@
 # Copyright (c) Dima Krasner, 2019.
 # NetHack may be freely redistributed.  See license for details.
 
-# Meson build system definitions for the Linux ncurses port.
+# Meson build system definitions with the Linux ncurses port as the default.
 
 project('nethack', 'c')
 
-hackdir = join_paths(get_option('prefix'),
+hackdir = join_paths('/',
                      get_option('localstatedir'),
                      'games/nethack')
 
-gzip = find_program('gzip')
+win_deps = []
+
+if not meson.is_cross_build()
+	win_deps += dependency('ncurses')
+
+	gzip = find_program('gzip')
+	add_global_arguments('-DCOMPRESS="@0@"'.format(gzip.path()),
+	                     '-DCOMPRESS_EXTENSION=".gz"',
+	                     '-DCURSES_GRAPHICS',
+	                     '-DSECURE',
+	                     '-DSYSCF',
+	                     '-DSYSCF_FILE="@0@/sysconf"'.format(hackdir),
+	                     language: 'c')
+endif
+
+ncurses_win_srcs = [
+	'win/curses/cursmain.c',
+	'win/curses/curswins.c',
+	'win/curses/cursmisc.c',
+	'win/curses/cursdial.c',
+	'win/curses/cursstat.c',
+	'win/curses/cursinit.c',
+	'win/curses/cursmesg.c',
+	'win/curses/cursinvt.c',
+
+	# TODO: separate OS-related stuff from the graphics stuff
+	'sys/unix/unixmain.c',
+	'sys/unix/unixunix.c',
+	'sys/unix/unixres.c',
+	'sys/share/posixregex.c',
+	'sys/share/ioctl.c',
+	'sys/share/unixtty.c',
+]
+win_srcs = meson.get_cross_property('win_srcs', ncurses_win_srcs)
 
 add_global_arguments('-DMESON',
                      '-DNOTPARMDECL',
                      '-DDLB',
-                     '-DCOMPRESS="@0@"'.format(gzip.path()),
-                     '-DCOMPRESS_EXTENSION=".gz"',
-                     '-DSYSCF',
-                     '-DSYSCF_FILE="@0@/sysconf"'.format(hackdir),
-                     '-DSECURE',
                      '-DTIMED_DELAY',
                      '-DHACKDIR="@0@"'.format(hackdir),
                      '-DCONFIG_ERROR_SECURE=FALSE',
-                     '-DCURSES_GRAPHICS',
                      language: 'c')
 
-gdb = find_program('gdb', required: false)
-if gdb.found()
-	add_global_arguments('-DDUMPLOG',
-	                     language: 'c')
+add_global_arguments('-DMESON',
+                     '-DNOTPARMDECL',
+                     '-DDLB',
+                     language: 'c',
+                     native: true)
+
+if target_machine.system() == 'windows'
+	add_languages('cpp')
+else
+	gdb = find_program('gdb', required: false)
+	if gdb.found()
+		add_global_arguments('-DDUMPLOG',
+		                     language: 'c')
+	endif
 endif
 
 include = include_directories('include')
 
 makedefs = executable('makedefs',
                       'util/makedefs.c', 'src/monst.c', 'src/objects.c',
-                      include_directories: include)
+                      include_directories: include,
+                      native: true)
 
 foreach letter, files: {
 	'o': ['onames.h'],
@@ -72,17 +110,31 @@ dgn_lex = custom_target('dgn_lex',
 
 dgn_comp = executable('dgn_comp',
                       makedefs_v[0], dgn_yacc[0], dgn_lex[0], 'util/dgn_main.c', 'src/alloc.c', 'util/panic.c',
-                      include_directories: include)
+                      include_directories: include,
+                      native: true)
 
 compiled_dungeon = custom_target('dungeon_comp',
                                  output: 'dungeon',
                                  input: makedefs_e,
                                  command : [dgn_comp, '@INPUT@'])
 
+tilemap = executable('tilemap',
+                     'win/share/tilemap.c',
+                     include_directories: include,
+                     native: true)
+
+tile = custom_target('tile',
+                     output: 'tile.c',
+                     command : [tilemap])
+if target_machine.system() == 'windows'
+	win_srcs += [tile]
+endif
+
 nethack = executable('nethack',
                      makedefs_p,
                      makedefs_v[0],
                      makedefs_o,
+                     makedefs_z[0],
                      'src/monst.c',
                      'src/objects.c',
                      'src/allmain.c',
@@ -181,7 +233,6 @@ nethack = executable('nethack',
                      'src/uhitm.c',
                      'src/vault.c',
                      'src/vision.c',
-                     makedefs_z[0],
                      'src/weapon.c',
                      'src/were.c',
                      'src/wield.c',
@@ -191,27 +242,14 @@ nethack = executable('nethack',
                      'src/worn.c',
                      'src/write.c',
                      'src/zap.c',
-                     'sys/share/posixregex.c',
-                     'sys/share/ioctl.c',
-                     'sys/unix/unixmain.c',
-                     'sys/share/unixtty.c',
-                     'sys/unix/unixunix.c',
-                     'sys/unix/unixres.c',
                      'win/tty/getline.c',
                      'win/tty/termcap.c',
                      'win/tty/topl.c',
                      'win/tty/wintty.c',
-                     'win/curses/cursmain.c',
-                     'win/curses/curswins.c',
-                     'win/curses/cursmisc.c',
-                     'win/curses/cursdial.c',
-                     'win/curses/cursstat.c',
-                     'win/curses/cursinit.c',
-                     'win/curses/cursmesg.c',
-                     'win/curses/cursinvt.c',
                      'src/version.c',
+                     win_srcs,
                      include_directories: include,
-                     dependencies: dependency('ncurses'),
+                     dependencies: win_deps,
                      install: true)
 
 recover = executable('recover',
@@ -231,7 +269,8 @@ lev_lex = custom_target('lev_lex',
 
 lev_comp = executable('lev_comp',
                       makedefs_p, lev_yacc[0], lev_lex[0], 'util/lev_main.c', 'src/alloc.c', 'util/panic.c', 'src/drawing.c', 'src/decl.c', 'src/monst.c', 'src/objects.c',
-                      include_directories: include)
+                      include_directories: include,
+                      native: true)
 
 levels = {
 	'bigroom': ['bigrm-1.lev', 'bigrm-2.lev', 'bigrm-3.lev', 'bigrm-4.lev', 'bigrm-5.lev', 'bigrm-6.lev', 'bigrm-7.lev', 'bigrm-8.lev', 'bigrm-9.lev', 'bigrm-10.lev'],
@@ -269,7 +308,8 @@ endforeach
 
 dlb = executable('dlb',
                  'util/dlb_main.c', 'src/dlb.c', 'src/alloc.c', 'util/panic.c',
-                 include_directories: include)
+                 include_directories: include,
+                 native: true)
 
 nhdat = custom_target('nhdat',
                       input: [makedefs_v[1], makedefs_s, makedefs_d, makedefs_r, makedefs_q, makedefs_h, compiled_dungeon, compiled_levels, compiled_roles],

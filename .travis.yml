@@ -99,6 +99,22 @@ matrix:
         - cd src
         - cp ../sys/winnt/Makefile.gcc ./Makefile
         - mingw32-make install
+    - os: linux
+      env: DESCR=windows-mingw-meson-cross
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - python3-pip
+            - python3-setuptools
+            - python3-wheel
+            - ninja-build
+            - bison
+            - flex
+            - gcc-mingw-w64-x86-64
+            - g++-mingw-w64-x86-64
+      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross && cd build && ninja"
+
   exclude:
 #    - os: osx
 #      osx_image: xcode10.3
