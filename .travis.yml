@@ -19,7 +19,7 @@ matrix:
             - flex
             - pkg-config
             - libncurses5-dev
-      script: "pip3 install meson && meson build && cd build && ninja install"
+      script: "sudo pip3 install meson && meson build && cd build && sudo ninja install"
     - os: linux
       env: DESCR=linux-xenial-clang HINTS=linux
       compiler: clang
