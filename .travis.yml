@@ -19,7 +19,8 @@ matrix:
             - flex
             - pkg-config
             - libncurses5-dev
-      script: "sudo pip3 install meson && meson build && cd build && sudo ninja install"
+            - ccache
+      script: "sudo pip3 install meson && meson build && ninja -C build && sudo ninja -C build install"
     - os: linux
       env: DESCR=linux-xenial-clang HINTS=linux
       compiler: clang
@@ -113,7 +114,8 @@ matrix:
             - flex
             - gcc-mingw-w64-x86-64
             - g++-mingw-w64-x86-64
-      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross && cd build && ninja"
+            - ccache
+      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross build && ninja -C build"
 
   exclude:
 #    - os: osx
@@ -146,3 +148,5 @@ deploy:
   prerelease: true
   name: "Pre-Release build of NetHack 3.6"
   body: "This is an auto generated Pre-Release build of NetHack 3.6"
+#
+cache: ccache
