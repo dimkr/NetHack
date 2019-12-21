@@ -19,7 +19,8 @@ matrix:
             - flex
             - pkg-config
             - libncurses5-dev
-      script: "sudo pip3 install meson && meson build && cd build && sudo ninja install"
+            - ccache
+      script: "sudo pip3 install meson && meson build && ninja -C build && sudo ninja -C build install"
     - os: linux
       env: DESCR=linux-xenial-clang HINTS=linux
       compiler: clang
@@ -99,6 +100,23 @@ matrix:
         - cd src
         - cp ../sys/winnt/Makefile.gcc ./Makefile
         - mingw32-make install
+    - os: linux
+      env: DESCR=windows-mingw-meson-cross
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - python3-pip
+            - python3-setuptools
+            - python3-wheel
+            - ninja-build
+            - bison
+            - flex
+            - gcc-mingw-w64-x86-64
+            - g++-mingw-w64-x86-64
+            - ccache
+      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross build && ninja -C build"
+
   exclude:
 #    - os: osx
 #      osx_image: xcode10.3
@@ -130,3 +148,5 @@ deploy:
   prerelease: true
   name: "Pre-Release build of NetHack 3.6"
   body: "This is an auto generated Pre-Release build of NetHack 3.6"
+#
+cache: ccache
