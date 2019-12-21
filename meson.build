@@ -9,6 +9,17 @@ hackdir = join_paths('/',
                      get_option('localstatedir'),
                      'games/nethack')
 
+add_global_arguments('-DMESON',
+                     '-DNOTPARMDECL',
+                     '-DDLB',
+                     '-DTIMED_DELAY',
+                     '-DHACKDIR="@0@"'.format(hackdir),
+                     '-DCONFIG_ERROR_SECURE=FALSE',
+                     language: ['c', 'cpp'])
+
+add_global_arguments('-std=c++11',
+                     language: 'cpp')
+
 win_deps = []
 
 if not meson.is_cross_build()
@@ -43,14 +54,6 @@ ncurses_win_srcs = [
 	'sys/share/unixtty.c',
 ]
 win_srcs = meson.get_cross_property('win_srcs', ncurses_win_srcs)
-
-add_global_arguments('-DMESON',
-                     '-DNOTPARMDECL',
-                     '-DDLB',
-                     '-DTIMED_DELAY',
-                     '-DHACKDIR="@0@"'.format(hackdir),
-                     '-DCONFIG_ERROR_SECURE=FALSE',
-                     language: ['c', 'cpp'])
 
 add_global_arguments('-DMESON',
                      '-DNOTPARMDECL',
@@ -268,7 +271,7 @@ lev_lex = custom_target('lev_lex',
                         command : [flex, '-o', '@OUTPUT0@', '--header-file=@OUTPUT1@', '@INPUT@'])
 
 lev_comp = executable('lev_comp',
-                      makedefs_p, lev_yacc[0], lev_lex[0], 'util/lev_main.c', 'src/alloc.c', 'util/panic.c', 'src/drawing.c', 'src/decl.c', 'src/monst.c', 'src/objects.c',
+                      makedefs_p, lev_yacc, lev_lex, 'util/lev_main.c', 'src/alloc.c', 'util/panic.c', 'src/drawing.c', 'src/decl.c', 'src/monst.c', 'src/objects.c',
                       include_directories: includes,
                       native: true)
 
