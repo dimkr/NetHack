@@ -119,7 +119,7 @@ compiled_dungeon = custom_target('dungeon_comp',
                                  command : [dgn_comp, '@INPUT@'])
 
 tilemap = executable('tilemap',
-                     'win/share/tilemap.c',
+                     makedefs_p, 'win/share/tilemap.c',
                      include_directories: include,
                      native: true)
 
