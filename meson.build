@@ -58,7 +58,11 @@ add_global_arguments('-DMESON',
                      language: ['c', 'cpp'],
                      native: true)
 
-if not meson.is_cross_build()
+includes = [include_directories('include')]
+
+if meson.is_cross_build()
+	includes += [include_directories(meson.get_cross_property('sys_dir'))]
+else
 	gdb = find_program('gdb', required: false)
 	if gdb.found()
 		add_global_arguments('-DDUMPLOG',
@@ -66,11 +70,9 @@ if not meson.is_cross_build()
 	endif
 endif
 
-include = include_directories('include')
-
 makedefs = executable('makedefs',
                       'util/makedefs.c', 'src/monst.c', 'src/objects.c',
-                      include_directories: include,
+                      include_directories: includes,
                       native: true)
 
 foreach letter, files: {
@@ -108,7 +110,7 @@ dgn_lex = custom_target('dgn_lex',
 
 dgn_comp = executable('dgn_comp',
                       makedefs_v[0], dgn_yacc[0], dgn_lex[0], 'util/dgn_main.c', 'src/alloc.c', 'util/panic.c',
-                      include_directories: include,
+                      include_directories: includes,
                       native: true)
 
 compiled_dungeon = custom_target('dungeon_comp',
@@ -118,7 +120,7 @@ compiled_dungeon = custom_target('dungeon_comp',
 
 tilemap = executable('tilemap',
                      makedefs_p, 'win/share/tilemap.c',
-                     include_directories: include,
+                     include_directories: includes,
                      native: true)
 
 tile = custom_target('tile',
@@ -246,13 +248,13 @@ nethack = executable('nethack',
                      'win/tty/wintty.c',
                      'src/version.c',
                      win_srcs,
-                     include_directories: include,
+                     include_directories: includes,
                      dependencies: win_deps,
                      install: true)
 
 recover = executable('recover',
                      'util/recover.c',
-                     include_directories: include,
+                     include_directories: includes,
                      install: true)
 
 lev_yacc = custom_target('lev_yacc',
@@ -267,7 +269,7 @@ lev_lex = custom_target('lev_lex',
 
 lev_comp = executable('lev_comp',
                       makedefs_p, lev_yacc[0], lev_lex[0], 'util/lev_main.c', 'src/alloc.c', 'util/panic.c', 'src/drawing.c', 'src/decl.c', 'src/monst.c', 'src/objects.c',
-                      include_directories: include,
+                      include_directories: includes,
                       native: true)
 
 levels = {
@@ -306,7 +308,7 @@ endforeach
 
 dlb = executable('dlb',
                  'util/dlb_main.c', 'src/dlb.c', 'src/alloc.c', 'util/panic.c',
-                 include_directories: include,
+                 include_directories: includes,
                  native: true)
 
 nhdat = custom_target('nhdat',
