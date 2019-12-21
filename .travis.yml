@@ -6,7 +6,7 @@ matrix:
       compiler: gcc
       script: "cd sys/unix/ && sh setup.sh hints/$HINTS && cd ../../ && make install"
     - os: linux
-      env: DESCR=linux-xenial-gcc HINTS=linux
+      env: DESCR=linux-xenial-gcc-meson
       compiler: gcc
       addons:
         apt:
@@ -15,6 +15,10 @@ matrix:
             - python3-setuptools
             - python3-wheel
             - ninja-build
+            - bison
+            - flex
+            - pkg-config
+            - libncurses5-dev
       script: "pip3 install meson && meson build && cd build && ninja install"
     - os: linux
       env: DESCR=linux-xenial-clang HINTS=linux

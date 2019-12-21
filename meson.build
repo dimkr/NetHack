@@ -46,7 +46,8 @@ foreach letter, files: {
 	'd': ['data'],
 	'r': ['rumors'],
 	'q': ['quest.dat'],
-	'h': ['oracles']
+	'h': ['oracles'],
+	'p': ['pm.h']
 }
 	target = 'makedefs_' + letter
 	set_variable(target,
@@ -55,9 +56,23 @@ foreach letter, files: {
 	                           command : [makedefs, '-' + letter]))
 endforeach
 
-dgn_comp= executable('dgn_comp',
-                     'util/dgn_yacc.c', 'util/dgn_lex.c', 'util/dgn_main.c', 'src/alloc.c', 'util/panic.c',
-                     include_directories: include)
+yacc = find_program('bison')
+
+dgn_yacc = custom_target('dgn_yacc',
+                         output : ['dgn_comp.c', 'dgn_comp.h'],
+                         input: 'util/dgn_comp.y',
+                         command : [yacc, '-d', '-o', '@OUTPUT0@', '@INPUT@'])
+
+flex = find_program('flex')
+
+dgn_lex = custom_target('dgn_lex',
+                        output : ['dgn_lex.c', 'dgn_lex.h'],
+                        input: 'util/dgn_comp.l',
+                        command : [flex, '-o', '@OUTPUT0@', '--header-file=@OUTPUT1@', '@INPUT@'])
+
+dgn_comp = executable('dgn_comp',
+                      makedefs_v[0], dgn_yacc[0], dgn_lex[0], 'util/dgn_main.c', 'src/alloc.c', 'util/panic.c',
+                      include_directories: include)
 
 compiled_dungeon = custom_target('dungeon_comp',
                                  output: 'dungeon',
@@ -65,6 +80,9 @@ compiled_dungeon = custom_target('dungeon_comp',
                                  command : [dgn_comp, '@INPUT@'])
 
 nethack = executable('nethack',
+                     makedefs_p,
+                     makedefs_v[0],
+                     makedefs_o,
                      'src/monst.c',
                      'src/objects.c',
                      'src/allmain.c',
@@ -201,8 +219,18 @@ recover = executable('recover',
                      include_directories: include,
                      install: true)
 
+lev_yacc = custom_target('lev_yacc',
+                         output : ['lev_comp.c', 'lev_comp.h'],
+                         input: 'util/lev_comp.y',
+                         command : [yacc, '-d', '-o', '@OUTPUT0@', '@INPUT@'])
+
+lev_lex = custom_target('lev_lex',
+                        output : ['lev_lex.c', 'lev_lex.h'],
+                        input: 'util/lev_comp.l',
+                        command : [flex, '-o', '@OUTPUT0@', '--header-file=@OUTPUT1@', '@INPUT@'])
+
 lev_comp = executable('lev_comp',
-                      'util/lev_yacc.c', 'util/lev_lex.c', 'util/lev_main.c', 'src/alloc.c', 'util/panic.c', 'src/drawing.c', 'src/decl.c', 'src/monst.c', 'src/objects.c',
+                      makedefs_p, lev_yacc[0], lev_lex[0], 'util/lev_main.c', 'src/alloc.c', 'util/panic.c', 'src/drawing.c', 'src/decl.c', 'src/monst.c', 'src/objects.c',
                       include_directories: include)
 
 levels = {
