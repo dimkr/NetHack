@@ -2,10 +2,6 @@ language: c
 matrix:
   include:
     - os: linux
-      env: DESCR=linux-xenial-gcc HINTS=linux
-      compiler: gcc
-      script: "cd sys/unix/ && sh setup.sh hints/$HINTS && cd ../../ && make install"
-    - os: linux
       env: DESCR=linux-xenial-gcc-meson
       compiler: gcc
       addons:
@@ -21,6 +17,50 @@ matrix:
             - libncurses5-dev
             - ccache
       script: "sudo pip3 install meson && meson build && ninja -C build && sudo ninja -C build install"
+    - os: linux
+      env: DESCR=windows-mingw-meson-cross
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - python3-pip
+            - python3-setuptools
+            - python3-wheel
+            - ninja-build
+            - bison
+            - flex
+            - gcc-mingw-w64-x86-64
+            - g++-mingw-w64-x86-64
+            - ccache
+      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross build && ninja -C build"
+    - os: linux
+      env: DESCR=msdos-djgpp-meson-cross
+      services: docker
+      script:
+        - git clone --depth 1 https://github.com/wmcbrine/PDCurses pdcurses
+        - |
+          docker run -v `pwd`:/root/NetHack -w /root/NetHack --rm -i centos:8 sh << EOF
+          dnf install gcc gcc-g++ python3 bison flex unzip
+          curl -Lo ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.9.0/ninja-linux.zip
+          unzip ninja-linux.zip
+          mv -f ninja /usr/local/bin/
+          pip3 install meson
+          # TODO: download over HTTPS
+          curl -o djcrx-2.05-5.x86_64.rpm ftp://ftp.fu-berlin.de/pc/languages/djgpp/rpms/djcrx-2.05-5.x86_64.rpm
+          dnf install -y djcrx-2.05-5.x86_64.rpm
+          curl -o djcross-binutils-2.30-1ap.x86_64.rpm ftp://ftp.fu-berlin.de/pc/languages/djgpp/rpms/djcross-binutils-2.30-1ap.x86_64.rpm
+          dnf install -y djcross-binutils-2.30-1ap.x86_64.rpm
+          curl -o djcross-gcc-9.2.0-1ap.x86_64.rpm ftp://ftp.fu-berlin.de/pc/languages/djgpp/rpms/djcross-gcc-9.2.0/djcross-gcc-9.2.0-1ap.x86_64.rpm
+          dnf install -y djcross-gcc-9.2.0-1ap.x86_64.rpm
+          curl -o djcross-gcc-c++-9.2.0-1ap.x86_64.rpm ftp://ftp.fu-berlin.de/pc/languages/djgpp/rpms/djcross-gcc-9.2.0/djcross-gcc-c++-9.2.0-1ap.x86_64.rpm
+          dnf install -y djcross-gcc-c++-9.2.0-1ap.x86_64.rpm
+          meson --cross-file=sys/msdos/msdos.cross build
+          ninja -C build
+          EOF
+    - os: linux
+      env: DESCR=linux-xenial-gcc HINTS=linux
+      compiler: gcc
+      script: "cd sys/unix/ && sh setup.sh hints/$HINTS && cd ../../ && make install"
     - os: linux
       env: DESCR=linux-xenial-clang HINTS=linux
       compiler: clang
@@ -100,22 +140,7 @@ matrix:
         - cd src
         - cp ../sys/winnt/Makefile.gcc ./Makefile
         - mingw32-make install
-    - os: linux
-      env: DESCR=windows-mingw-meson-cross
-      compiler: gcc
-      addons:
-        apt:
-          packages:
-            - python3-pip
-            - python3-setuptools
-            - python3-wheel
-            - ninja-build
-            - bison
-            - flex
-            - gcc-mingw-w64-x86-64
-            - g++-mingw-w64-x86-64
-            - ccache
-      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross build && ninja -C build"
+
 
   exclude:
 #    - os: osx
