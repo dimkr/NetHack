@@ -38,7 +38,7 @@ matrix:
       services: docker
       script:
         - git clone --depth 1 https://github.com/wmcbrine/PDCurses pdcurses
-        - docker run -v `pwd`:/root/NetHack -w /root/NetHack --rm -i centos:8 sh -xe << sys/msdos/ci.sh
+        - docker run -v `pwd`:/root/NetHack -w /root/NetHack --rm -i centos:8 sh -xe < sys/msdos/ci.sh
     - os: linux
       env: DESCR=linux-xenial-gcc HINTS=linux
       compiler: gcc
