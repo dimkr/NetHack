@@ -35,7 +35,7 @@ if not meson.is_cross_build()
 	                     language: ['c', 'cpp'])
 endif
 
-ncurses_win_srcs = [
+curses_srcs = [
 	'win/curses/cursmain.c',
 	'win/curses/curswins.c',
 	'win/curses/cursmisc.c',
@@ -44,16 +44,23 @@ ncurses_win_srcs = [
 	'win/curses/cursinit.c',
 	'win/curses/cursmesg.c',
 	'win/curses/cursinvt.c',
+]
 
-	# TODO: separate OS-related stuff from the graphics stuff
+posix_regex_srcs = [
+	'sys/share/posixregex.c'
+]
+
+linux_srcs = [
 	'sys/unix/unixmain.c',
 	'sys/unix/unixunix.c',
 	'sys/unix/unixres.c',
-	'sys/share/posixregex.c',
 	'sys/share/ioctl.c',
-	'sys/share/unixtty.c',
+	'sys/share/unixtty.c'
 ]
-win_srcs = meson.get_cross_property('win_srcs', ncurses_win_srcs)
+
+win_srcs = meson.get_cross_property('win_srcs', curses_srcs)
+sys_srcs = meson.get_cross_property('sys_srcs', linux_srcs)
+regex_srcs = meson.get_cross_property('regex_srcs', posix_regex_srcs)
 
 add_global_arguments('-DMESON',
                      '-DNOTPARMDECL',
@@ -68,6 +75,7 @@ if meson.is_cross_build()
 
 	if meson.get_cross_property('pdcurses', false)
 		includes += [include_directories('pdcurses')]
+		win_srcs += curses_srcs
 		win_srcs += ['pdcurses/pdcurses/addch.c', 'pdcurses/pdcurses/addchstr.c', 'pdcurses/pdcurses/addstr.c', 'pdcurses/pdcurses/attr.c', 'pdcurses/pdcurses/beep.c', 'pdcurses/pdcurses/bkgd.c', 'pdcurses/pdcurses/border.c', 'pdcurses/pdcurses/clear.c', 'pdcurses/pdcurses/color.c', 'pdcurses/pdcurses/delch.c', 'pdcurses/pdcurses/deleteln.c', 'pdcurses/pdcurses/getch.c', 'pdcurses/pdcurses/getstr.c', 'pdcurses/pdcurses/getyx.c', 'pdcurses/pdcurses/inch.c', 'pdcurses/pdcurses/inchstr.c', 'pdcurses/pdcurses/initscr.c', 'pdcurses/pdcurses/inopts.c', 'pdcurses/pdcurses/insch.c', 'pdcurses/pdcurses/insstr.c', 'pdcurses/pdcurses/instr.c', 'pdcurses/pdcurses/kernel.c', 'pdcurses/pdcurses/keyname.c', 'pdcurses/pdcurses/mouse.c', 'pdcurses/pdcurses/move.c', 'pdcurses/pdcurses/outopts.c', 'pdcurses/pdcurses/overlay.c', 'pdcurses/pdcurses/pad.c', 'pdcurses/pdcurses/panel.c', 'pdcurses/pdcurses/printw.c', 'pdcurses/pdcurses/refresh.c', 'pdcurses/pdcurses/scanw.c', 'pdcurses/pdcurses/scr_dump.c', 'pdcurses/pdcurses/scroll.c', 'pdcurses/pdcurses/slk.c', 'pdcurses/pdcurses/termattr.c', 'pdcurses/pdcurses/touch.c', 'pdcurses/pdcurses/util.c', 'pdcurses/pdcurses/window.c', 'pdcurses/pdcurses/debug.c']
 	endif
 else
@@ -255,7 +263,9 @@ nethack = executable('nethack',
                      'win/tty/topl.c',
                      'win/tty/wintty.c',
                      'src/version.c',
+                     sys_srcs,
                      win_srcs,
+                     regex_srcs,
                      include_directories: includes,
                      dependencies: win_deps,
                      install: true)

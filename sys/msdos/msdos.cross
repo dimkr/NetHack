@@ -22,4 +22,5 @@ ranlib = '/usr/bin/i586-pc-msdosdjgpp-ranlib'
 [properties]
 sys_dir = 'sys/msdos'
 pdcurses = true
-win_srcs = ['sys/msdos/msdos.c', 'sys/msdos/sound.c', 'sys/msdos/pckeys.c', 'sys/msdos/video.c', 'sys/msdos/vidtxt.c', 'sys/msdos/pckeys.c', 'win/tty/wintty.c', 'sys/share/pcmain.c', 'sys/share/pcsys.c', 'sys/share/pcunix.c', 'sys/share/posixregex.c', 'win/curses/cursmain.c', 'win/curses/curswins.c', 'win/curses/cursmisc.c', 'win/curses/cursdial.c', 'win/curses/cursstat.c', 'win/curses/cursinit.c', 'win/curses/cursmesg.c', 'win/curses/cursinvt.c', 'pdcurses/dos/pdcclip.c', 'pdcurses/dos/pdcgetsc.c', 'pdcurses/dos/pdcscrn.c', 'pdcurses/dos/pdcutil.c', 'pdcurses/dos/pdcdisp.c', 'pdcurses/dos/pdckbd.c', 'pdcurses/dos/pdcsetsc.c', 'sys/share/pctty.c']
+sys_srcs = ['sys/msdos/msdos.c', 'sys/msdos/sound.c', 'sys/msdos/pckeys.c', 'sys/msdos/video.c', 'sys/msdos/vidtxt.c', 'sys/msdos/pckeys.c', 'sys/share/pcmain.c', 'sys/share/pcsys.c', 'sys/share/pcunix.c', 'sys/share/pctty.c']
+win_srcs = ['pdcurses/dos/pdcclip.c', 'pdcurses/dos/pdcgetsc.c', 'pdcurses/dos/pdcscrn.c', 'pdcurses/dos/pdcutil.c', 'pdcurses/dos/pdcdisp.c', 'pdcurses/dos/pdckbd.c', 'pdcurses/dos/pdcsetsc.c', 'win/tty/wintty.c']
