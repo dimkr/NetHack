@@ -69,7 +69,7 @@ if meson.is_cross_build()
 	if meson.get_cross_property('pdcurses', false)
 		includes += [include_directories('pdcurses')]
 		win_srcs += ['pdcurses/pdcurses/addch.c', 'pdcurses/pdcurses/addchstr.c', 'pdcurses/pdcurses/addstr.c', 'pdcurses/pdcurses/attr.c', 'pdcurses/pdcurses/beep.c', 'pdcurses/pdcurses/bkgd.c', 'pdcurses/pdcurses/border.c', 'pdcurses/pdcurses/clear.c', 'pdcurses/pdcurses/color.c', 'pdcurses/pdcurses/delch.c', 'pdcurses/pdcurses/deleteln.c', 'pdcurses/pdcurses/getch.c', 'pdcurses/pdcurses/getstr.c', 'pdcurses/pdcurses/getyx.c', 'pdcurses/pdcurses/inch.c', 'pdcurses/pdcurses/inchstr.c', 'pdcurses/pdcurses/initscr.c', 'pdcurses/pdcurses/inopts.c', 'pdcurses/pdcurses/insch.c', 'pdcurses/pdcurses/insstr.c', 'pdcurses/pdcurses/instr.c', 'pdcurses/pdcurses/kernel.c', 'pdcurses/pdcurses/keyname.c', 'pdcurses/pdcurses/mouse.c', 'pdcurses/pdcurses/move.c', 'pdcurses/pdcurses/outopts.c', 'pdcurses/pdcurses/overlay.c', 'pdcurses/pdcurses/pad.c', 'pdcurses/pdcurses/panel.c', 'pdcurses/pdcurses/printw.c', 'pdcurses/pdcurses/refresh.c', 'pdcurses/pdcurses/scanw.c', 'pdcurses/pdcurses/scr_dump.c', 'pdcurses/pdcurses/scroll.c', 'pdcurses/pdcurses/slk.c', 'pdcurses/pdcurses/termattr.c', 'pdcurses/pdcurses/touch.c', 'pdcurses/pdcurses/util.c', 'pdcurses/pdcurses/window.c', 'pdcurses/pdcurses/debug.c']
-
+	endif
 else
 	gdb = find_program('gdb', required: false)
 	if gdb.found()
