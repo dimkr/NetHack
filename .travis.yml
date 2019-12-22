@@ -2,10 +2,6 @@ language: c
 matrix:
   include:
     - os: linux
-      env: DESCR=linux-xenial-gcc HINTS=linux
-      compiler: gcc
-      script: "cd sys/unix/ && sh setup.sh hints/$HINTS && cd ../../ && make install"
-    - os: linux
       env: DESCR=linux-xenial-gcc-meson
       compiler: gcc
       addons:
@@ -21,6 +17,32 @@ matrix:
             - libncurses5-dev
             - ccache
       script: "sudo pip3 install meson && meson build && ninja -C build && sudo ninja -C build install"
+    - os: linux
+      env: DESCR=windows-mingw-meson-cross
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - python3-pip
+            - python3-setuptools
+            - python3-wheel
+            - ninja-build
+            - bison
+            - flex
+            - gcc-mingw-w64-x86-64
+            - g++-mingw-w64-x86-64
+            - ccache
+      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross build && ninja -C build"
+    - os: linux
+      env: DESCR=msdos-djgpp-meson-cross
+      services: docker
+      script:
+        - git clone --depth 1 https://github.com/wmcbrine/PDCurses pdcurses
+        - docker run -v `pwd`:/root/NetHack -w /root/NetHack --rm -i centos:8 sh -xe < sys/msdos/ci.sh
+    - os: linux
+      env: DESCR=linux-xenial-gcc HINTS=linux
+      compiler: gcc
+      script: "cd sys/unix/ && sh setup.sh hints/$HINTS && cd ../../ && make install"
     - os: linux
       env: DESCR=linux-xenial-clang HINTS=linux
       compiler: clang
@@ -100,22 +122,7 @@ matrix:
         - cd src
         - cp ../sys/winnt/Makefile.gcc ./Makefile
         - mingw32-make install
-    - os: linux
-      env: DESCR=windows-mingw-meson-cross
-      compiler: gcc
-      addons:
-        apt:
-          packages:
-            - python3-pip
-            - python3-setuptools
-            - python3-wheel
-            - ninja-build
-            - bison
-            - flex
-            - gcc-mingw-w64-x86-64
-            - g++-mingw-w64-x86-64
-            - ccache
-      script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross build && ninja -C build"
+
 
   exclude:
 #    - os: osx
