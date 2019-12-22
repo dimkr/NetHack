@@ -3,7 +3,7 @@
 
 # CI flow for DOS Meson port.
 
-dnf install -y gcc gcc-g++ python3 bison flex unzip
+dnf install -y gcc gcc-c++ python3 bison flex unzip
 curl -Lo ninja-linux.zip https://github.com/ninja-build/ninja/releases/download/v1.9.0/ninja-linux.zip
 unzip ninja-linux.zip
 mv -f ninja /usr/local/bin/
