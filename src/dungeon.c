@@ -800,7 +800,7 @@ init_dungeons()
                 pd.tmplevel[cl].rndlevs = (int)Ntohl(pd.tmplevel[cl].rndlevs);
                 pd.tmplevel[cl].chain = (int)Ntohl(pd.tmplevel[cl].chain);
                 pd.tmplevel[cl].flags = (int)Ntohl(pd.tmplevel[cl].flags);
-	    }
+            }
 
             for (j = 0; j < pd.tmpdungeon[i].branches; j++) {
                 Fread((genericptr_t) &pd.tmpbranch[cb],
@@ -810,7 +810,7 @@ init_dungeons()
                 pd.tmpbranch[cb].chain = (int)Ntohl(pd.tmpbranch[cb].chain);
                 pd.tmpbranch[cb].type = (int)Ntohl(pd.tmpbranch[cb].type);
                 pd.tmpbranch[cb].up = (int)Ntohl(pd.tmpbranch[cb].up);
-	    }
+            }
             n_dgns--;
             i--;
             continue;

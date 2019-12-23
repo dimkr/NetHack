@@ -5,7 +5,11 @@
 #define PORTABLE_H
 
 #ifdef MESON
-#	include <arpa/inet.h>
+#	ifdef _WIN32
+#		include <winsock2.h>
+#	else
+#		include <arpa/inet.h>
+#	endif
 #	define Htonl htonl
 #	define Ntohl ntohl
 #	define Htons htons
