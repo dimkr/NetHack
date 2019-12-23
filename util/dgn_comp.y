@@ -692,9 +692,9 @@ output_dgn()
 	    for(; cb < nb; cb++) {
 		tmpbranch[cb].lev.base = (short)Htons(tmpbranch[cb].lev.base);
 		tmpbranch[cb].lev.rand = (short)Htons(tmpbranch[cb].lev.rand);
-		tmpbranch[cb].chain = (int)Htons(tmpbranch[cb].chain);
-		tmpbranch[cb].type = (int)Htons(tmpbranch[cb].type);
-		tmpbranch[cb].up = (int)Htons(tmpbranch[cb].up);
+		tmpbranch[cb].chain = (int)Htonl(tmpbranch[cb].chain);
+		tmpbranch[cb].type = (int)Htonl(tmpbranch[cb].type);
+		tmpbranch[cb].up = (int)Htonl(tmpbranch[cb].up);
 		(void) fwrite((char *)&tmpbranch[cb], sizeof(struct tmpbranch),
 							1, yyout);
 	    }

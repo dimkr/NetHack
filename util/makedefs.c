@@ -1172,16 +1172,16 @@ make_version()
      * Value used for compiler (word size/field alignment/padding) check.
      */
     version.struct_sizes1 =
-        (((unsigned long) sizeof(struct context_info) << 24)
-         | ((unsigned long) sizeof(struct obj) << 17)
-         | ((unsigned long) sizeof(struct monst) << 10)
-         | ((unsigned long) sizeof(struct you)));
-    version.struct_sizes2 = (((unsigned long) sizeof(struct flag) << 10) |
+        (((unsigned int) sizeof(struct context_info) << 24)
+         | ((unsigned int) sizeof(struct obj) << 17)
+         | ((unsigned int) sizeof(struct monst) << 10)
+         | ((unsigned int) sizeof(struct you)));
+    version.struct_sizes2 = (((unsigned int) sizeof(struct flag) << 10) |
 /* free bits in here */
 #ifdef SYSFLAGS
-                             ((unsigned long) sizeof(struct sysflag)));
+                             ((unsigned int) sizeof(struct sysflag)));
 #else
-                             ((unsigned long) 0L));
+                             ((unsigned int) 0L));
 #endif
     return;
 }
@@ -1392,19 +1392,19 @@ do_date()
         Fprintf(ofp, "#define BUILD_TIME (%lu%s)\n",
                 (unsigned long) clocktim, ul_sfx);
     Fprintf(ofp, "\n");
-    Fprintf(ofp, "#define VERSION_NUMBER 0x%08lx%s\n", version.incarnation,
+    Fprintf(ofp, "#define VERSION_NUMBER 0x%08x%s\n", version.incarnation,
             ul_sfx);
-    Fprintf(ofp, "#define VERSION_FEATURES 0x%08lx%s\n", version.feature_set,
+    Fprintf(ofp, "#define VERSION_FEATURES 0x%08x%s\n", version.feature_set,
             ul_sfx);
 #ifdef IGNORED_FEATURES
-    Fprintf(ofp, "#define IGNORED_FEATURES 0x%08lx%s\n",
-            (unsigned long) IGNORED_FEATURES, ul_sfx);
+    Fprintf(ofp, "#define IGNORED_FEATURES 0x%08x%s\n",
+            (unsigned int) IGNORED_FEATURES, ul_sfx);
 #endif
-    Fprintf(ofp, "#define VERSION_SANITY1 0x%08lx%s\n", version.entity_count,
+    Fprintf(ofp, "#define VERSION_SANITY1 0x%08x%s\n", version.entity_count,
             ul_sfx);
-    Fprintf(ofp, "#define VERSION_SANITY2 0x%08lx%s\n", version.struct_sizes1,
+    Fprintf(ofp, "#define VERSION_SANITY2 0x%08x%s\n", version.struct_sizes1,
             ul_sfx);
-    Fprintf(ofp, "#define VERSION_SANITY3 0x%08lx%s\n", version.struct_sizes2,
+    Fprintf(ofp, "#define VERSION_SANITY3 0x%08x%s\n", version.struct_sizes2,
             ul_sfx);
     Fprintf(ofp, "\n");
     Fprintf(ofp, "#define VERSION_STRING \"%s\"\n", version_string(buf, "."));

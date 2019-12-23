@@ -11,6 +11,7 @@
 #define NEED_VARARGS
 #include "hack.h"
 #include "date.h"
+#include "portable.h"
 #include "sp_lev.h"
 #ifdef STRICT_REF_DEF
 #include "tcap.h"
@@ -1465,6 +1466,11 @@ int fd;
         VERSION_SANITY3
     };
 
+    version_data.incarnation = Htonl(version_data.incarnation);
+    version_data.feature_set = Htonl(version_data.feature_set);
+    version_data.entity_count = Htonl(version_data.entity_count);
+    version_data.struct_sizes1 = Htonl(version_data.struct_sizes1);
+    version_data.struct_sizes2 = Htonl(version_data.struct_sizes2);
     Write(fd, &version_data, sizeof version_data);
     return TRUE;
 }
@@ -1479,16 +1485,19 @@ int fd;
 sp_lev *maze;
 {
     int i;
+    unsigned int n;
 
     if (!write_common_data(fd))
         return FALSE;
 
-    Write(fd, &(maze->n_opcodes), sizeof(maze->n_opcodes));
+    n = Htonl(maze->n_opcodes);
+    Write(fd, &n, sizeof(n));
 
     for (i = 0; i < maze->n_opcodes; i++) {
         _opcode tmpo = maze->opcodes[i];
 
-        Write(fd, &(tmpo.opcode), sizeof(tmpo.opcode));
+        n = Htonl(tmpo.opcode);
+        Write(fd, &n, sizeof(n));
 
         if (tmpo.opcode < SPO_NULL || tmpo.opcode >= MAX_SP_OPCODES)
             panic("write_maze: unknown opcode (%d).", tmpo.opcode);
@@ -1508,7 +1517,8 @@ sp_lev *maze;
                 case SPOVAR_MONST:
                 case SPOVAR_OBJ:
                 case SPOVAR_INT:
-                    Write(fd, &(ov->vardata.l), sizeof(ov->vardata.l));
+                    n = Htonl(ov->vardata.l);
+                    Write(fd, &n, sizeof(n));
                     break;
                 case SPOVAR_VARIABLE:
                 case SPOVAR_STRING:
@@ -1516,7 +1526,8 @@ sp_lev *maze;
                         size = strlen(ov->vardata.str);
                     else
                         size = 0;
-                    Write(fd, &size, sizeof(size));
+                    n = Htonl(size);
+                    Write(fd, &n, sizeof(n));
                     if (size) {
                         Write(fd, ov->vardata.str, size);
                         Free(ov->vardata.str);
