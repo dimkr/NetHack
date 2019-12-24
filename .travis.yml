@@ -115,7 +115,7 @@ matrix:
       env: DESCR=windows-mingw
       script:
         - export ADD_CURSES=Y
-        - export PDCURSES_TOP=../../pdcurses
+        - export PDCURSES_TOP=../pdcurses
         - cd src
         - cp ../sys/winnt/Makefile.gcc ./Makefile
         - mingw32-make install
