@@ -7,6 +7,8 @@
 #ifdef MESON
 #	ifdef _WIN32
 #		include <winsock2.h>
+#	elif defined(__DJGPP__)
+#		include <netinet/in.h>
 #	else
 #		include <arpa/inet.h>
 #	endif
