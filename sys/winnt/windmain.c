@@ -9,9 +9,17 @@
 #include "dlb.h"
 #include <ctype.h>
 #include <stdlib.h>
+#ifdef MESON
+#include <sys/stat.h>
+#else
 #include <sys\stat.h>
+#endif
 #include <errno.h>
+#ifdef MESON
+#include <shlobj.h>
+#else
 #include <ShlObj.h>
+#endif
 #if !defined(VERSION_MAJOR)
 #include "patchlevel.h"
 #endif
@@ -68,9 +76,7 @@ int windows_startup_state = 0;    /* we flag whether to continue with this */
 extern int redirect_stdout;       /* from sys/share/pcsys.c */
 extern int GUILaunched;
 HANDLE hStdOut;
-#if defined(MSWIN_GRAPHICS)
 char default_window_sys[] = "mswin";
-#endif
 #ifdef WANT_GETHDATE
 static struct stat hbuf;
 #endif

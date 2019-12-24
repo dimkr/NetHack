@@ -45,7 +45,9 @@
 /* #define SHORT_FILENAMES */ /* All NT filesystems support long names now
  */
 
+#ifndef MESON
 #define VERSION_IN_DLB_FILENAME     /* Append version digits to nhdat */
+#endif
 
 #ifdef MICRO
 #undef MICRO /* never define this! */

@@ -51,7 +51,7 @@ const
 #include <signal.h>
 #endif
 
-#if defined(MSDOS) || defined(OS2) || defined(TOS) || defined(WIN32)
+#if defined(MSDOS) || defined(OS2) || defined(TOS) || (defined(WIN32) && !defined(MESON))
 #ifndef __DJGPP__
 #include <sys\stat.h>
 #else

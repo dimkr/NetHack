@@ -1,0 +1,26 @@
+# Copyright (c) Dima Krasner, 2019.
+# NetHack may be freely redistributed.  See license for details.
+
+# Meson build system definitions for the DOS TTY port.
+
+[build_machine]
+cpu_family = 'x86_64'
+
+[host_machine]
+system = 'dos'
+cpu_family = 'x86'
+cpu = 'i386'
+endian = 'little'
+
+[binaries]
+c = '/usr/bin/i586-pc-msdosdjgpp-gcc'
+cpp = '/usr/bin/i586-pc-msdosdjgpp-g++'
+ld = '/usr/bin/i586-pc-msdosdjgpp-ld'
+ar = '/usr/bin/i586-pc-msdosdjgpp-ar'
+ranlib = '/usr/bin/i586-pc-msdosdjgpp-ranlib'
+
+[properties]
+sys_dir = 'sys/msdos'
+pdcurses = true
+sys_srcs = ['sys/msdos/msdos.c', 'sys/msdos/sound.c', 'sys/msdos/pckeys.c', 'sys/msdos/video.c', 'sys/msdos/vidtxt.c', 'sys/msdos/pckeys.c', 'sys/share/pcmain.c', 'sys/share/pcsys.c', 'sys/share/pcunix.c', 'sys/share/pctty.c']
+win_srcs = ['pdcurses/dos/pdcclip.c', 'pdcurses/dos/pdcgetsc.c', 'pdcurses/dos/pdcscrn.c', 'pdcurses/dos/pdcutil.c', 'pdcurses/dos/pdcdisp.c', 'pdcurses/dos/pdckbd.c', 'pdcurses/dos/pdcsetsc.c', 'win/tty/wintty.c']

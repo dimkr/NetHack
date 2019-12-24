@@ -1,0 +1,30 @@
+# Copyright (c) Dima Krasner, 2019.
+# NetHack may be freely redistributed.  See license for details.
+
+# Meson build system definitions for the Windows TTY port.
+
+[build_machine]
+cpu_family = 'x86_64'
+
+[host_machine]
+system = 'windows'
+cpu_family = 'x86'
+cpu = 'x86_64'
+endian = 'little'
+
+[binaries]
+c = ['ccache', '/usr/bin/x86_64-w64-mingw32-gcc-win32']
+cpp = ['ccache', '/usr/bin/x86_64-w64-mingw32-g++-win32']
+ld = '/usr/bin/x86_64-w64-mingw32-ld'
+ar = '/usr/bin/x86_64-w64-mingw32-ar'
+ranlib = '/usr/bin/x86_64-w64-mingw32-ranlib'
+
+[properties]
+sys_dir = 'sys/winnt'
+pdcurses = true
+sys_srcs = ['sys/winnt/nttty.c', 'sys/winnt/stubs.c', 'sys/winnt/ntsound.c', 'sys/winnt/win10.c', 'sys/winnt/winnt.c', 'sys/winnt/windmain.c']
+win_srcs = ['pdcurses/wincon/pdcclip.c', 'pdcurses/wincon/pdcdisp.c', 'pdcurses/wincon/pdcgetsc.c', 'pdcurses/wincon/pdckbd.c', 'pdcurses/wincon/pdcscrn.c', 'pdcurses/wincon/pdcsetsc.c', 'pdcurses/wincon/pdcutil.c', 'win/tty/wintty.c', 'win/share/safeproc.c']
+regex_srcs = ['sys/share/cppregex.cpp']
+c_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']
+cpp_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']
+cpp_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32']

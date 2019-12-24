@@ -25,6 +25,7 @@
 #include "config.h"
 #include "date.h"
 #include "dgn_file.h"
+#include "portable.h"
 
 void FDECL(yyerror, (const char *));
 void FDECL(yywarning, (const char *));
@@ -640,7 +641,7 @@ void
 output_dgn()
 {
 	int	nd, cl = 0, nl = 0,
-		    cb = 0, nb = 0;
+		    cb = 0, nb = 0, ndb;
 	static struct version_info version_data = {
 			VERSION_NUMBER, VERSION_FEATURES,
 			VERSION_SANITY1, VERSION_SANITY2, VERSION_SANITY3
@@ -651,25 +652,52 @@ output_dgn()
 	    exit(EXIT_FAILURE);
 	}
 
+	version_data.incarnation = Htonl(version_data.incarnation);
+	version_data.feature_set = Htonl(version_data.feature_set);
+	version_data.entity_count = Htonl(version_data.entity_count);
+	version_data.struct_sizes1 = Htonl(version_data.struct_sizes1);
+	version_data.struct_sizes2 = Htonl(version_data.struct_sizes2);
 	if (fwrite((char *)&version_data, sizeof version_data, 1, yyout) != 1) {
 	    yyerror("FATAL - output failure.");
 	    exit(EXIT_FAILURE);
 	}
 
-	(void) fwrite((char *)&n_dgns, sizeof(int), 1, yyout);
+	ndb = (int)Htonl(n_dgns);
+	(void) fwrite((char *)&ndb, sizeof(int), 1, yyout);
+
 	for (nd = 0; nd < n_dgns; nd++) {
+	    tmpdungeon[nd].lev.base = (short)Htons(tmpdungeon[nd].lev.base);
+	    tmpdungeon[nd].lev.rand = (short)Htons(tmpdungeon[nd].lev.rand);
+	    tmpdungeon[nd].flags = (int)Htonl(tmpdungeon[nd].flags);
+	    tmpdungeon[nd].chance = (int)Htonl(tmpdungeon[nd].chance);
+	    nl += tmpdungeon[nd].levels;
+	    tmpdungeon[nd].levels = (int)Htonl(tmpdungeon[nd].levels);
+	    nb += tmpdungeon[nd].branches;
+	    tmpdungeon[nd].branches = (int)Htonl(tmpdungeon[nd].branches);
+	    tmpdungeon[nd].entry_lev = (int)Htonl(tmpdungeon[nd].entry_lev);
 	    (void) fwrite((char *)&tmpdungeon[nd], sizeof(struct tmpdungeon),
 							1, yyout);
 
-	    nl += tmpdungeon[nd].levels;
-	    for(; cl < nl; cl++)
+	    for(; cl < nl; cl++) {
+		tmplevel[cl].lev.base = (short)(Htons(tmplevel[cl].lev.base));
+		tmplevel[cl].lev.rand = (short)(Htons(tmplevel[cl].lev.rand));
+		tmplevel[cl].chance = (int)Htonl(tmplevel[cl].chance);
+		tmplevel[cl].rndlevs = (int)Htonl(tmplevel[cl].rndlevs);
+		tmplevel[cl].chain = (int)Htonl(tmplevel[cl].chain);
+		tmplevel[cl].flags = (int)Htonl(tmplevel[cl].flags);
 		(void) fwrite((char *)&tmplevel[cl], sizeof(struct tmplevel),
 							1, yyout);
+	    }
 
-	    nb += tmpdungeon[nd].branches;
-	    for(; cb < nb; cb++)
+	    for(; cb < nb; cb++) {
+		tmpbranch[cb].lev.base = (short)Htons(tmpbranch[cb].lev.base);
+		tmpbranch[cb].lev.rand = (short)Htons(tmpbranch[cb].lev.rand);
+		tmpbranch[cb].chain = (int)Htonl(tmpbranch[cb].chain);
+		tmpbranch[cb].type = (int)Htonl(tmpbranch[cb].type);
+		tmpbranch[cb].up = (int)Htonl(tmpbranch[cb].up);
 		(void) fwrite((char *)&tmpbranch[cb], sizeof(struct tmpbranch),
 							1, yyout);
+	    }
 	}
 	/* apparently necessary for Think C 5.x, otherwise harmless */
 	(void) fflush(yyout);
