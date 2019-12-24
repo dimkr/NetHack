@@ -21,8 +21,9 @@ ranlib = '/usr/bin/x86_64-w64-mingw32-ranlib'
 
 [properties]
 sys_dir = 'sys/winnt'
+pdcurses = true
 sys_srcs = ['sys/winnt/nttty.c', 'sys/winnt/stubs.c', 'sys/winnt/ntsound.c', 'sys/winnt/win10.c', 'sys/winnt/winnt.c', 'sys/winnt/windmain.c']
-win_srcs = ['win/tty/wintty.c', 'win/share/safeproc.c']
+win_srcs = ['pdcurses/wincon/pdcclip.c', 'pdcurses/wincon/pdcdisp.c', 'pdcurses/wincon/pdcgetsc.c', 'pdcurses/wincon/pdckbd.c', 'pdcurses/wincon/pdcscrn.c', 'pdcurses/wincon/pdcsetsc.c', 'pdcurses/wincon/pdcutil.c', 'win/tty/wintty.c', 'win/share/safeproc.c']
 regex_srcs = ['sys/share/cppregex.cpp']
 c_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']
 cpp_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']

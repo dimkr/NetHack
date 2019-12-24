@@ -36,9 +36,7 @@ matrix:
     - os: linux
       env: DESCR=msdos-djgpp-meson-cross
       services: docker
-      script:
-        - git clone --depth 1 https://github.com/wmcbrine/PDCurses pdcurses
-        - docker run -v `pwd`:/root/NetHack -w /root/NetHack --rm -i centos:8 sh -xe < sys/msdos/ci.sh
+      script: docker run --rm -v `pwd`:/root/NetHack -w /root/NetHack --rm -i centos:8 sh -xe < sys/msdos/ci.sh
     - os: linux
       env: DESCR=linux-xenial-gcc HINTS=linux
       compiler: gcc
@@ -116,9 +114,8 @@ matrix:
 #     install: choco install mingw
       env: DESCR=windows-mingw
       script:
-        - git clone --depth 1 https://github.com/wmcbrine/PDCurses.git ../pdcurses
         - export ADD_CURSES=Y
-        - export PDCURSES_TOP=../../pdcurses
+        - export PDCURSES_TOP=../pdcurses
         - cd src
         - cp ../sys/winnt/Makefile.gcc ./Makefile
         - mingw32-make install
