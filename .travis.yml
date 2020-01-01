@@ -31,7 +31,7 @@ matrix:
             - flex
             - gcc-mingw-w64-x86-64
             - g++-mingw-w64-x86-64
-            - wine64
+            - wine64-development
             - ccache
       script: "sudo pip3 install meson && meson --cross-file=sys/winnt/winnt.cross build && ninja -C build"
     - os: linux
