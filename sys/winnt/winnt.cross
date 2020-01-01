@@ -18,7 +18,7 @@ cpp = ['ccache', '/usr/bin/x86_64-w64-mingw32-g++-win32']
 ld = '/usr/bin/x86_64-w64-mingw32-ld'
 ar = '/usr/bin/x86_64-w64-mingw32-ar'
 ranlib = '/usr/bin/x86_64-w64-mingw32-ranlib'
-exe_wrapper = 'wine64'
+exe_wrapper = 'wine64-development'
 
 [properties]
 sys_dir = 'sys/winnt'
