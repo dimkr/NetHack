@@ -344,22 +344,35 @@ foreach file: ['perm', 'record', 'logfile', 'xlogfile']
 	              install_mode: 'rw-------')
 endforeach
 
-install_data('doc/Guidebook.txt',
-             'dat/license',
-             install_dir: join_paths(get_option('datadir'), 'doc/nethack'))
-
 install_man('doc/nethack.6',
             'doc/recover.6')
 
-install_data('sys/unix/sysconf',
-             'dat/symbols',
-             'dat/license',
+install_data('dat/license',
+             'doc/Guidebook.txt',
+             'dat/opthelp',
              install_dir: hackdir,
              install_mode: 'rw-------')
 
 if target_machine.system() == 'windows'
+	install_data('sys/winnt/sysconf.template',
+	             'sys/winnt/.nethackrc.template',
+	             install_dir: hackdir,
+	             install_mode: 'rw-------')
+
+	install_data('dat/symbols',
+	             install_dir: hackdir,
+	             install_mode: 'rw-------',
+	             rename: 'symbols.template')
+
 	libnhdefkey = shared_library('nhdefkey', 'sys/winnt/nhdefkey.c', makedefs_p,
 	                             include_directories: includes,
 	                             name_prefix: '',
-	                             link_args:['-Wl,--add-stdcall-alias', '-Wl,--export-all-symbols', '-fvisibility=default', '-DBUILD_DLL'])
+	                             link_args:['-Wl,--add-stdcall-alias', '-Wl,--export-all-symbols', '-fvisibility=default', '-DBUILD_DLL'],
+	                             install: true,
+	                             install_dir: hackdir)
+else
+	install_data('sys/unix/sysconf',
+	             'dat/symbols',
+	             install_dir: hackdir,
+	             install_mode: 'rw-------')
 endif
