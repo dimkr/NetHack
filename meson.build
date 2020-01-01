@@ -91,8 +91,7 @@ endif
 
 makedefs = executable('makedefs',
                       'util/makedefs.c', 'src/monst.c', 'src/objects.c',
-                      include_directories: includes,
-                      native: true)
+                      include_directories: includes)
 
 foreach letter, files: {
 	'o': ['onames.h'],
@@ -129,8 +128,7 @@ dgn_lex = custom_target('dgn_lex',
 
 dgn_comp = executable('dgn_comp',
                       makedefs_v[0], dgn_yacc[0], dgn_lex[0], 'util/dgn_main.c', 'src/alloc.c', 'util/panic.c',
-                      include_directories: includes,
-                      native: true)
+                      include_directories: includes)
 
 compiled_dungeon = custom_target('dungeon_comp',
                                  output: 'dungeon',
@@ -139,8 +137,7 @@ compiled_dungeon = custom_target('dungeon_comp',
 
 tilemap = executable('tilemap',
                      makedefs_p, 'win/share/tilemap.c',
-                     include_directories: includes,
-                     native: true)
+                     include_directories: includes)
 
 tile = custom_target('tile',
                      output: 'tile.c',
@@ -290,8 +287,7 @@ lev_lex = custom_target('lev_lex',
 
 lev_comp = executable('lev_comp',
                       makedefs_p, lev_yacc, lev_lex, 'util/lev_main.c', 'src/alloc.c', 'util/panic.c', 'src/drawing.c', 'src/decl.c', 'src/monst.c', 'src/objects.c',
-                      include_directories: includes,
-                      native: true)
+                      include_directories: includes)
 
 levels = {
 	'bigroom': ['bigrm-1.lev', 'bigrm-2.lev', 'bigrm-3.lev', 'bigrm-4.lev', 'bigrm-5.lev', 'bigrm-6.lev', 'bigrm-7.lev', 'bigrm-8.lev', 'bigrm-9.lev', 'bigrm-10.lev'],
@@ -329,8 +325,7 @@ endforeach
 
 dlb = executable('dlb',
                  'util/dlb_main.c', 'src/dlb.c', 'src/alloc.c', 'util/panic.c',
-                 include_directories: includes,
-                 native: true)
+                 include_directories: includes)
 
 nhdat = custom_target('nhdat',
                       input: [makedefs_v[1], makedefs_s, makedefs_d, makedefs_r, makedefs_q, makedefs_h, compiled_dungeon, compiled_levels, compiled_roles],
@@ -349,15 +344,35 @@ foreach file: ['perm', 'record', 'logfile', 'xlogfile']
 	              install_mode: 'rw-------')
 endforeach
 
-install_data('doc/Guidebook.txt',
-             'dat/license',
-             install_dir: join_paths(get_option('datadir'), 'doc/nethack'))
-
 install_man('doc/nethack.6',
             'doc/recover.6')
 
-install_data('sys/unix/sysconf',
-             'dat/symbols',
-             'dat/license',
+install_data('dat/license',
+             'doc/Guidebook.txt',
+             'dat/opthelp',
              install_dir: hackdir,
              install_mode: 'rw-------')
+
+if target_machine.system() == 'windows'
+	install_data('sys/winnt/sysconf.template',
+	             'sys/winnt/.nethackrc.template',
+	             install_dir: hackdir,
+	             install_mode: 'rw-------')
+
+	install_data('dat/symbols',
+	             install_dir: hackdir,
+	             install_mode: 'rw-------',
+	             rename: 'symbols.template')
+
+	libnhdefkey = shared_library('nhdefkey', 'sys/winnt/nhdefkey.c', makedefs_p,
+	                             include_directories: includes,
+	                             name_prefix: '',
+	                             link_args:['-Wl,--add-stdcall-alias', '-Wl,--export-all-symbols', '-fvisibility=default', '-DBUILD_DLL'],
+	                             install: true,
+	                             install_dir: hackdir)
+else
+	install_data('sys/unix/sysconf',
+	             'dat/symbols',
+	             install_dir: hackdir,
+	             install_mode: 'rw-------')
+endif
