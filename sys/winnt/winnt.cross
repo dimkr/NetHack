@@ -18,15 +18,17 @@ cpp = ['ccache', '/usr/bin/x86_64-w64-mingw32-g++-win32']
 ld = '/usr/bin/x86_64-w64-mingw32-ld'
 ar = '/usr/bin/x86_64-w64-mingw32-ar'
 ranlib = '/usr/bin/x86_64-w64-mingw32-ranlib'
+strip = '/usr/bin/x86_64-w64-mingw32-strip'
 exe_wrapper = 'wine64-development'
 
 [properties]
 sys_dir = 'sys/winnt'
+install_script = 'sys/winnt/install.sh'
 pdcurses = true
 sys_srcs = ['sys/winnt/nttty.c', 'sys/winnt/stubs.c', 'sys/winnt/ntsound.c', 'sys/winnt/win10.c', 'sys/winnt/winnt.c', 'sys/winnt/windmain.c']
 win_srcs = ['pdcurses/wincon/pdcclip.c', 'pdcurses/wincon/pdcdisp.c', 'pdcurses/wincon/pdcgetsc.c', 'pdcurses/wincon/pdckbd.c', 'pdcurses/wincon/pdcscrn.c', 'pdcurses/wincon/pdcsetsc.c', 'pdcurses/wincon/pdcutil.c', 'win/tty/wintty.c', 'win/share/safeproc.c']
 regex_srcs = ['sys/share/cppregex.cpp']
 c_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']
 cpp_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']
-c_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32']
-cpp_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32']
+c_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32', '-static-libgcc']
+cpp_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32', '-static-libgcc', '-static-libstdc++']

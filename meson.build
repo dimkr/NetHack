@@ -65,8 +65,7 @@ regex_srcs = meson.get_cross_property('regex_srcs', posix_regex_srcs)
 add_global_arguments('-DMESON',
                      '-DNOTPARMDECL',
                      '-DDLB',
-                     language: ['c', 'cpp'],
-                     native: true)
+                     language: ['c', 'cpp'])
 
 includes = [include_directories('include')]
 
@@ -144,6 +143,11 @@ tile = custom_target('tile',
                      command : [tilemap])
 if target_machine.system() == 'windows'
 	win_srcs += [tile]
+endif
+
+install_script = meson.get_cross_property('install_script')
+if install_script != ''
+	meson.add_install_script(install_script)
 endif
 
 nethack = executable('nethack',
@@ -268,12 +272,12 @@ nethack = executable('nethack',
                      regex_srcs,
                      include_directories: includes,
                      dependencies: win_deps,
-                     install: true)
+                     install: install_script == '')
 
 recover = executable('recover',
                      'util/recover.c',
                      include_directories: includes,
-                     install: true)
+                     install: install_script == '')
 
 lev_yacc = custom_target('lev_yacc',
                          output : ['lev_comp.c', 'lev_comp.h'],
@@ -331,7 +335,8 @@ nhdat = custom_target('nhdat',
                       input: [makedefs_v[1], makedefs_s, makedefs_d, makedefs_r, makedefs_q, makedefs_h, compiled_dungeon, compiled_levels, compiled_roles],
                       output: 'nhdat',
                       command: [dlb, 'cf', '@OUTPUT@', '@INPUT@', join_paths(meson.source_root(), 'dat/help'), join_paths(meson.source_root(), 'dat/hh'), join_paths(meson.source_root(), 'dat/cmdhelp'), join_paths(meson.source_root(), 'dat/keyhelp'), join_paths(meson.source_root(), 'dat/history'), join_paths(meson.source_root(), 'dat/opthelp'), join_paths(meson.source_root(), 'dat/wizhelp'), join_paths(meson.source_root(), 'dat/tribute')],
-                      install: true,
+                      build_by_default: true,
+                      install: install_script == '',
                       install_dir: hackdir,
                       install_mode: 'rw-r--r--')
 
@@ -339,40 +344,32 @@ foreach file: ['perm', 'record', 'logfile', 'xlogfile']
 	custom_target(file,
 	              output: file,
 	              command: ['touch', '@OUTPUT@'],
-	              install: true,
+	              install: install_script == '',
 	              install_dir: hackdir,
 	              install_mode: 'rw-------')
 endforeach
 
-install_man('doc/nethack.6',
-            'doc/recover.6')
+if install_script == ''
+	install_man('doc/nethack.6',
+	            'doc/recover.6')
 
-install_data('dat/license',
-             'doc/Guidebook.txt',
-             'dat/opthelp',
-             install_dir: hackdir,
-             install_mode: 'rw-------')
-
-if target_machine.system() == 'windows'
-	install_data('sys/winnt/sysconf.template',
-	             'sys/winnt/.nethackrc.template',
+	install_data('dat/license',
+	             'doc/Guidebook.txt',
+	             'dat/opthelp',
 	             install_dir: hackdir,
 	             install_mode: 'rw-------')
 
-	install_data('dat/symbols',
-	             install_dir: hackdir,
-	             install_mode: 'rw-------',
-	             rename: 'symbols.template')
-
-	libnhdefkey = shared_library('nhdefkey', 'sys/winnt/nhdefkey.c', makedefs_p,
-	                             include_directories: includes,
-	                             name_prefix: '',
-	                             link_args:['-Wl,--add-stdcall-alias', '-Wl,--export-all-symbols', '-fvisibility=default', '-DBUILD_DLL'],
-	                             install: true,
-	                             install_dir: hackdir)
-else
 	install_data('sys/unix/sysconf',
 	             'dat/symbols',
 	             install_dir: hackdir,
 	             install_mode: 'rw-------')
+endif
+
+if target_machine.system() == 'windows'
+	libnhdefkey = shared_library('nhdefkey', 'sys/winnt/nhdefkey.c', makedefs_p,
+	                             include_directories: includes,
+	                             name_prefix: '',
+	                             link_args:['-Wl,--add-stdcall-alias', '-Wl,--export-all-symbols', '-fvisibility=default', '-DBUILD_DLL'],
+	                             install: install_script == '',
+	                             install_dir: hackdir)
 endif
