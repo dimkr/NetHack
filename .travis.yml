@@ -161,6 +161,10 @@ deploy:
     - windows-mingw-meson-cross-$TRAVIS_COMMIT.tar.gz
   skip_cleanup: true
   prerelease: true
+  draft: true
+  on:
+    all_branches: true
+  overwrite: true
   name: "Pre-Release build of NetHack 3.6"
   body: "This is an auto generated Pre-Release build of NetHack 3.6"
 #
