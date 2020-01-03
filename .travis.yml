@@ -18,7 +18,7 @@ matrix:
             - ccache
       script: |
               sudo pip3 install meson
-              meson build
+              meson --buildtype=release build
               ninja -C build
               DESTDIR=/tmp/linux-xenial-gcc-meson ninja -C build install
               tar -C /tmp -c linux-xenial-gcc-meson | gzip -9 > linux-xenial-gcc-meson-$TRAVIS_COMMIT.tar.gz
@@ -42,7 +42,7 @@ matrix:
             - ccache
       script: |
               sudo pip3 install meson
-              meson --cross-file=sys/winnt/winnt.cross build
+              meson --cross-file=sys/winnt/winnt.cross --buildtype=release build
               ninja -C build
               DESTDIR=/tmp/windows-mingw-meson-cross ninja -C build install
               tar -C /tmp -c windows-mingw-meson-cross | gzip -9 > windows-mingw-meson-cross-$TRAVIS_COMMIT.tar.gz
