@@ -147,7 +147,15 @@ if install_script != ''
 	meson.add_install_script(install_script)
 endif
 
+compiled_resources = []
+resources = meson.get_cross_property('resources', '')
+if resources != ''
+	windows = import('windows')
+	compiled_resources += [windows.compile_resources(resources)]
+endif
+
 nethack = executable('nethack',
+                     compiled_resources,
                      makedefs_p,
                      makedefs_v[0],
                      makedefs_o,

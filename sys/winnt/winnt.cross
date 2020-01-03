@@ -19,11 +19,13 @@ ld = '/usr/bin/x86_64-w64-mingw32-ld'
 ar = '/usr/bin/x86_64-w64-mingw32-ar'
 ranlib = '/usr/bin/x86_64-w64-mingw32-ranlib'
 strip = '/usr/bin/x86_64-w64-mingw32-strip'
+windres = '/usr/bin/x86_64-w64-mingw32-windres'
 exe_wrapper = 'wine64-development'
 
 [properties]
 sys_dir = 'sys/winnt'
 install_script = 'sys/winnt/install.sh'
+resources = 'sys/winnt/console.rc'
 pdcurses = true
 sys_srcs = ['sys/winnt/nttty.c', 'sys/winnt/stubs.c', 'sys/winnt/ntsound.c', 'sys/winnt/win10.c', 'sys/winnt/winnt.c', 'sys/winnt/windmain.c']
 win_srcs = ['pdcurses/wincon/pdcclip.c', 'pdcurses/wincon/pdcdisp.c', 'pdcurses/wincon/pdcgetsc.c', 'pdcurses/wincon/pdckbd.c', 'pdcurses/wincon/pdcscrn.c', 'pdcurses/wincon/pdcsetsc.c', 'pdcurses/wincon/pdcutil.c', 'win/tty/wintty.c', 'win/share/safeproc.c']
