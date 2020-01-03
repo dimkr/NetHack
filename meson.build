@@ -3,7 +3,7 @@
 
 # Meson build system definitions with the Linux ncurses port as the default.
 
-project('nethack', 'c', 'cpp')
+project('nethack', 'c', 'cpp', default_options: ['cpp_std=c++11'])
 
 hackdir = join_paths('/',
                      get_option('localstatedir'),
@@ -16,9 +16,6 @@ add_global_arguments('-DMESON',
                      '-DHACKDIR="@0@"'.format(hackdir),
                      '-DCONFIG_ERROR_SECURE=FALSE',
                      language: ['c', 'cpp'])
-
-add_global_arguments('-std=c++11',
-                     language: 'cpp')
 
 win_deps = []
 
@@ -145,7 +142,7 @@ if target_machine.system() == 'windows'
 	win_srcs += [tile]
 endif
 
-install_script = meson.get_cross_property('install_script')
+install_script = meson.get_cross_property('install_script', '')
 if install_script != ''
 	meson.add_install_script(install_script)
 endif
