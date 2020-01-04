@@ -59,11 +59,6 @@ win_srcs = meson.get_cross_property('win_srcs', curses_srcs)
 sys_srcs = meson.get_cross_property('sys_srcs', linux_srcs)
 regex_srcs = meson.get_cross_property('regex_srcs', posix_regex_srcs)
 
-add_global_arguments('-DMESON',
-                     '-DNOTPARMDECL',
-                     '-DDLB',
-                     language: ['c', 'cpp'])
-
 includes = [include_directories('include')]
 
 if meson.is_cross_build()
@@ -352,7 +347,7 @@ dlb = executable('dlb',
 nhdat = custom_target('nhdat',
                       input: [makedefs_v[1], makedefs_s, makedefs_d, makedefs_r, makedefs_q, makedefs_h, compiled_dungeon, compiled_levels, compiled_roles],
                       output: 'nhdat',
-                      command: [dlb, 'cf', '@OUTPUT@', '@INPUT@', join_paths(meson.source_root(), 'dat/help'), join_paths(meson.source_root(), 'dat/hh'), join_paths(meson.source_root(), 'dat/cmdhelp'), join_paths(meson.source_root(), 'dat/keyhelp'), join_paths(meson.source_root(), 'dat/history'), join_paths(meson.source_root(), 'dat/opthelp'), join_paths(meson.source_root(), 'dat/wizhelp'), join_paths(meson.source_root(), 'dat/tribute')],
+                      command: [dlb, 'cf', '@OUTPUT@', '@INPUT@', join_paths(meson.source_root(), 'dat/help'), join_paths(meson.source_root(), 'dat/hh'), join_paths(meson.source_root(), 'dat/cmdhelp'), join_paths(meson.source_root(), 'dat/keyhelp'), join_paths(meson.source_root(), 'dat/history'), join_paths(meson.source_root(), 'dat/opthelp'), join_paths(meson.source_root(), 'dat/wizhelp'), join_paths(meson.source_root(), 'dat/tribute'), join_paths(meson.source_root(), 'dat/license')],
                       build_by_default: true,
                       install: install_script == '',
                       install_dir: hackdir,

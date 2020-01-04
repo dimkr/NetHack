@@ -293,11 +293,11 @@ extern char *FDECL(dupstr, (const char *)); /* ditto */
 /* Used for consistency checks of various data files; declare it here so
    that utility programs which include config.h but not hack.h can see it. */
 struct version_info {
-    unsigned int incarnation;   /* actual version number */
-    unsigned int feature_set;   /* bitmask of config settings */
-    unsigned int entity_count;  /* # of monsters and objects */
-    unsigned int struct_sizes1; /* size of key structs */
-    unsigned int struct_sizes2; /* size of more key structs */
+    unsigned long incarnation;   /* actual version number */
+    unsigned long feature_set;   /* bitmask of config settings */
+    unsigned long entity_count;  /* # of monsters and objects */
+    unsigned long struct_sizes1; /* size of key structs */
+    unsigned long struct_sizes2; /* size of more key structs */
 };
 
 struct savefile_info {

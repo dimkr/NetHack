@@ -7,7 +7,6 @@
 #include "dgn_file.h"
 #include "dlb.h"
 #include "lev.h"
-#include "portable.h"
 
 #define DUNGEON_FILE "dungeon"
 
@@ -752,11 +751,6 @@ init_dungeons()
 
     /* validate the data's version against the program's version */
     Fread((genericptr_t) &vers_info, sizeof vers_info, 1, dgn_file);
-    vers_info.incarnation = Ntohl(vers_info.incarnation);
-    vers_info.feature_set = Ntohl(vers_info.feature_set);
-    vers_info.entity_count = Ntohl(vers_info.entity_count);
-    vers_info.struct_sizes1 = Ntohl(vers_info.struct_sizes1);
-    vers_info.struct_sizes2 = Ntohl(vers_info.struct_sizes2);
     /* we'd better clear the screen now, since when error messages come from
      * check_version() they will be printed using pline(), which doesn't
      * mix with the raw messages that might be already on the screen
@@ -772,45 +766,24 @@ init_dungeons()
      */
     sp_levchn = (s_level *) 0;
     Fread((genericptr_t) &n_dgns, sizeof(int), 1, dgn_file);
-    n_dgns = (int)Ntohl(n_dgns);
     if (n_dgns >= MAXDUNGEON)
         panic("init_dungeons: too many dungeons");
 
     for (i = 0; i < n_dgns; i++) {
         Fread((genericptr_t) &pd.tmpdungeon[i], sizeof(struct tmpdungeon), 1,
               dgn_file);
-        pd.tmpdungeon[i].lev.base = (short)Ntohs(pd.tmpdungeon[i].lev.base);
-        pd.tmpdungeon[i].lev.rand = (short)Ntohs(pd.tmpdungeon[i].lev.rand);
-        pd.tmpdungeon[i].flags = (int)Ntohl(pd.tmpdungeon[i].flags);
-        pd.tmpdungeon[i].chance = (int)Ntohl(pd.tmpdungeon[i].chance);
-        pd.tmpdungeon[i].levels = (int)Ntohl(pd.tmpdungeon[i].levels);
-        pd.tmpdungeon[i].branches = (int)Ntohl(pd.tmpdungeon[i].branches);
-        pd.tmpdungeon[i].entry_lev = (int)Ntohl(pd.tmpdungeon[i].entry_lev);
         if (!wizard && pd.tmpdungeon[i].chance
             && (pd.tmpdungeon[i].chance <= rn2(100))) {
             int j;
 
             /* skip over any levels or branches */
-            for (j = 0; j < pd.tmpdungeon[i].levels; j++) {
+            for (j = 0; j < pd.tmpdungeon[i].levels; j++)
                 Fread((genericptr_t) &pd.tmplevel[cl],
                       sizeof(struct tmplevel), 1, dgn_file);
-                pd.tmplevel[cl].lev.base = (short)Ntohs(pd.tmplevel[cl].lev.base);
-                pd.tmplevel[cl].lev.rand = (short)Ntohs(pd.tmplevel[cl].lev.rand);
-                pd.tmplevel[cl].chance = (int)Ntohl(pd.tmplevel[cl].chance);
-                pd.tmplevel[cl].rndlevs = (int)Ntohl(pd.tmplevel[cl].rndlevs);
-                pd.tmplevel[cl].chain = (int)Ntohl(pd.tmplevel[cl].chain);
-                pd.tmplevel[cl].flags = (int)Ntohl(pd.tmplevel[cl].flags);
-            }
 
-            for (j = 0; j < pd.tmpdungeon[i].branches; j++) {
+            for (j = 0; j < pd.tmpdungeon[i].branches; j++)
                 Fread((genericptr_t) &pd.tmpbranch[cb],
                       sizeof(struct tmpbranch), 1, dgn_file);
-                pd.tmpbranch[cb].lev.base = (short)Ntohs(pd.tmpbranch[cb].lev.base);
-                pd.tmpbranch[cb].lev.rand = (short)Ntohs(pd.tmpbranch[cb].lev.rand);
-                pd.tmpbranch[cb].chain = (int)Ntohl(pd.tmpbranch[cb].chain);
-                pd.tmpbranch[cb].type = (int)Ntohl(pd.tmpbranch[cb].type);
-                pd.tmpbranch[cb].up = (int)Ntohl(pd.tmpbranch[cb].up);
-            }
             n_dgns--;
             i--;
             continue;
@@ -914,13 +887,6 @@ init_dungeons()
         for (; cl < pd.n_levs; cl++) {
             Fread((genericptr_t) &pd.tmplevel[cl], sizeof(struct tmplevel), 1,
                   dgn_file);
-            pd.tmplevel[cl].lev.base = (short)Ntohs(pd.tmplevel[cl].lev.base);
-            pd.tmplevel[cl].lev.rand = (short)Ntohs(pd.tmplevel[cl].lev.rand);
-            pd.tmplevel[cl].flags = (int)Ntohl(pd.tmplevel[cl].flags);
-            pd.tmplevel[cl].chance = (int)Ntohl(pd.tmplevel[cl].chance);
-            pd.tmplevel[cl].rndlevs = (int)Ntohl(pd.tmplevel[cl].rndlevs);
-            pd.tmplevel[cl].chain = (int)Ntohl(pd.tmplevel[cl].chain);
-            pd.tmplevel[cl].flags = (int)Ntohl(pd.tmplevel[cl].flags);
             init_level(i, cl, &pd);
         }
         /*
@@ -942,15 +908,9 @@ init_dungeons()
         pd.n_brs += pd.tmpdungeon[i].branches;
         if (pd.n_brs > BRANCH_LIMIT)
             panic("init_dungeon: too many branches");
-        for (; cb < pd.n_brs; cb++) {
+        for (; cb < pd.n_brs; cb++)
             Fread((genericptr_t) &pd.tmpbranch[cb], sizeof(struct tmpbranch),
                   1, dgn_file);
-            pd.tmpbranch[cb].lev.base = (short)Ntohs(pd.tmpbranch[cb].lev.base);
-            pd.tmpbranch[cb].lev.rand = (short)Ntohs(pd.tmpbranch[cb].lev.rand);
-            pd.tmpbranch[cb].chain = (int)Ntohl(pd.tmpbranch[cb].chain);
-            pd.tmpbranch[cb].type = (int)Ntohl(pd.tmpbranch[cb].type);
-            pd.tmpbranch[cb].up = (int)Ntohl(pd.tmpbranch[cb].up);
-	}
     }
     (void) dlb_fclose(dgn_file);
 

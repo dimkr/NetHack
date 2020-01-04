@@ -11,7 +11,6 @@
 
 #include "hack.h"
 #include "dlb.h"
-#include "portable.h"
 #include "sp_lev.h"
 
 #ifdef _MSC_VER
@@ -6036,11 +6035,6 @@ const char *name;
     if (!fd)
         return FALSE;
     Fread((genericptr_t) &vers_info, sizeof vers_info, 1, fd);
-    vers_info.incarnation = Ntohl(vers_info.incarnation);
-    vers_info.feature_set = Ntohl(vers_info.feature_set);
-    vers_info.entity_count = Ntohl(vers_info.entity_count);
-    vers_info.struct_sizes1 = Ntohl(vers_info.struct_sizes1);
-    vers_info.struct_sizes2 = Ntohl(vers_info.struct_sizes2);
     if (!check_version(&vers_info, name, TRUE)) {
         (void) dlb_fclose(fd);
         goto give_up;

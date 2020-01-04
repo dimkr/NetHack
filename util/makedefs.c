@@ -1117,10 +1117,10 @@ make_version()
     /*
      * integer version number
      */
-    version.incarnation = ((unsigned int) VERSION_MAJOR << 24)
-                          | ((unsigned int) VERSION_MINOR << 16)
-                          | ((unsigned int) PATCHLEVEL << 8)
-                          | ((unsigned int) EDITLEVEL);
+    version.incarnation = ((unsigned long) VERSION_MAJOR << 24)
+                          | ((unsigned long) VERSION_MINOR << 16)
+                          | ((unsigned long) PATCHLEVEL << 8)
+                          | ((unsigned long) EDITLEVEL);
     /*
      * encoded feature list
      * Note:  if any of these magic numbers are changed or reassigned,
@@ -1128,31 +1128,31 @@ make_version()
      * The actual values have no special meaning, and the category
      * groupings are just for convenience.
      */
-    version.feature_set = (unsigned int) (0
+    version.feature_set = (unsigned long) (0L
 /* levels and/or topology (0..4) */
 /* monsters (5..9) */
 #ifdef MAIL
-                                           | (1 << 6)
+                                           | (1L << 6)
 #endif
 /* objects (10..14) */
 /* flag bits and/or other global variables (15..26) */
 #ifdef TEXTCOLOR
-                                           | (1 << 17)
+                                           | (1L << 17)
 #endif
 #ifdef INSURANCE
-                                           | (1 << 18)
+                                           | (1L << 18)
 #endif
 #ifdef SCORE_ON_BOTL
-                                           | (1 << 19)
+                                           | (1L << 19)
 #endif
 /* data format (27..31)
  * External compression methods such as COMPRESS and ZLIB_COMP
  * do not affect the contents and are thus excluded from here */
 #ifdef ZEROCOMP
-                                           | (1 << 27)
+                                           | (1L << 27)
 #endif
 #ifdef RLECOMP
-                                           | (1 << 28)
+                                           | (1L << 28)
 #endif
                                                );
     /*
@@ -1161,27 +1161,27 @@ make_version()
      */
     for (i = 1; artifact_names[i]; i++)
         continue;
-    version.entity_count = (unsigned int) (i - 1);
+    version.entity_count = (unsigned long) (i - 1);
     for (i = 1; objects[i].oc_class != ILLOBJ_CLASS; i++)
         continue;
-    version.entity_count = (version.entity_count << 12) | (unsigned int) i;
+    version.entity_count = (version.entity_count << 12) | (unsigned long) i;
     for (i = 0; mons[i].mlet; i++)
         continue;
-    version.entity_count = (version.entity_count << 12) | (unsigned int) i;
+    version.entity_count = (version.entity_count << 12) | (unsigned long) i;
     /*
      * Value used for compiler (word size/field alignment/padding) check.
      */
     version.struct_sizes1 =
-        (((unsigned int) sizeof(struct context_info) << 24)
-         | ((unsigned int) sizeof(struct obj) << 17)
-         | ((unsigned int) sizeof(struct monst) << 10)
-         | ((unsigned int) sizeof(struct you)));
-    version.struct_sizes2 = (((unsigned int) sizeof(struct flag) << 10) |
+        (((unsigned long) sizeof(struct context_info) << 24)
+         | ((unsigned long) sizeof(struct obj) << 17)
+         | ((unsigned long) sizeof(struct monst) << 10)
+         | ((unsigned long) sizeof(struct you)));
+    version.struct_sizes2 = (((unsigned long) sizeof(struct flag) << 10) |
 /* free bits in here */
 #ifdef SYSFLAGS
-                             ((unsigned int) sizeof(struct sysflag)));
+                             ((unsigned long) sizeof(struct sysflag)));
 #else
-                             ((unsigned int) 0));
+                             ((unsigned long) 0L));
 #endif
     return;
 }
@@ -1392,19 +1392,19 @@ do_date()
         Fprintf(ofp, "#define BUILD_TIME (%lu%s)\n",
                 (unsigned long) clocktim, ul_sfx);
     Fprintf(ofp, "\n");
-    Fprintf(ofp, "#define VERSION_NUMBER 0x%08x%s\n", version.incarnation,
+    Fprintf(ofp, "#define VERSION_NUMBER 0x%08lx%s\n", version.incarnation,
             ul_sfx);
-    Fprintf(ofp, "#define VERSION_FEATURES 0x%08x%s\n", version.feature_set,
+    Fprintf(ofp, "#define VERSION_FEATURES 0x%08lx%s\n", version.feature_set,
             ul_sfx);
 #ifdef IGNORED_FEATURES
-    Fprintf(ofp, "#define IGNORED_FEATURES 0x%08x%s\n",
-            (unsigned int) IGNORED_FEATURES, ul_sfx);
+    Fprintf(ofp, "#define IGNORED_FEATURES 0x%08lx%s\n",
+            (unsigned long) IGNORED_FEATURES, ul_sfx);
 #endif
-    Fprintf(ofp, "#define VERSION_SANITY1 0x%08x%s\n", version.entity_count,
+    Fprintf(ofp, "#define VERSION_SANITY1 0x%08lx%s\n", version.entity_count,
             ul_sfx);
-    Fprintf(ofp, "#define VERSION_SANITY2 0x%08x%s\n", version.struct_sizes1,
+    Fprintf(ofp, "#define VERSION_SANITY2 0x%08lx%s\n", version.struct_sizes1,
             ul_sfx);
-    Fprintf(ofp, "#define VERSION_SANITY3 0x%08x%s\n", version.struct_sizes2,
+    Fprintf(ofp, "#define VERSION_SANITY3 0x%08lx%s\n", version.struct_sizes2,
             ul_sfx);
     Fprintf(ofp, "\n");
     Fprintf(ofp, "#define VERSION_STRING \"%s\"\n", version_string(buf, "."));

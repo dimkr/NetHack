@@ -9,8 +9,8 @@ install -D -m 755 $MESON_BUILD_ROOT/nethack.exe $DESTDIR/NetHack.exe
 install -m 755 $MESON_BUILD_ROOT/recover.exe $DESTDIR/recover.exe
 
 for i in $MESON_BUILD_ROOT/nhdat \
-         $MESON_SOURCE_ROOT/doc/nethack.6 \
-         $MESON_SOURCE_ROOT/doc/recover.6 \
+         $MESON_SOURCE_ROOT/doc/nethack.txt \
+         $MESON_SOURCE_ROOT/doc/recover.txt \
          $MESON_SOURCE_ROOT/dat/license \
          $MESON_SOURCE_ROOT/doc/Guidebook.txt \
          $MESON_SOURCE_ROOT/dat/opthelp \
