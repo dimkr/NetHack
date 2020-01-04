@@ -657,14 +657,15 @@ output_dgn()
 	}
 
 	(void) fwrite((char *)&n_dgns, sizeof(int), 1, yyout);
-
 	for (nd = 0; nd < n_dgns; nd++) {
 	    (void) fwrite((char *)&tmpdungeon[nd], sizeof(struct tmpdungeon),
 							1, yyout);
+
 	    nl += tmpdungeon[nd].levels;
-	    for(; cl < nl; cl++) 
+	    for(; cl < nl; cl++)
 		(void) fwrite((char *)&tmplevel[cl], sizeof(struct tmplevel),
 							1, yyout);
+
 	    nb += tmpdungeon[nd].branches;
 	    for(; cb < nb; cb++)
 		(void) fwrite((char *)&tmpbranch[cb], sizeof(struct tmpbranch),
