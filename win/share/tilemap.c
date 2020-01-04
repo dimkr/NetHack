@@ -237,7 +237,11 @@ int set, entry;
 #ifdef MAC
 #define SOURCE_TEMPLATE ":src:%s"
 #else
+#ifdef MESON
+#define SOURCE_TEMPLATE "%s"
+#else
 #define SOURCE_TEMPLATE "../src/%s"
+#endif
 #endif
 #endif
 

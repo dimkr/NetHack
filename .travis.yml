@@ -2,6 +2,55 @@ language: c
 matrix:
   include:
     - os: linux
+      env: DESCR=linux-xenial-gcc-meson
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - python3-pip
+            - python3-setuptools
+            - python3-wheel
+            - ninja-build
+            - bison
+            - flex
+            - pkg-config
+            - libncurses5-dev
+            - ccache
+      script: |
+              sudo pip3 install meson
+              meson --buildtype=release build
+              ninja -C build
+              DESTDIR=/tmp/linux-xenial-gcc-meson ninja -C build install
+              tar -C /tmp -c linux-xenial-gcc-meson | gzip -9 > linux-xenial-gcc-meson-$TRAVIS_COMMIT.tar.gz
+    - os: linux
+      env: DESCR=windows-mingw-meson-cross
+      compiler: gcc
+      addons:
+        apt:
+          packages:
+            - python3-pip
+            - python3-setuptools
+            - python3-wheel
+            - ninja-build
+            - bison
+            - flex
+            - gcc-mingw-w64-x86-64
+            - g++-mingw-w64-x86-64
+            - wine64-development
+            - wine32-development
+            - wine-development
+            - ccache
+      script: |
+              sudo pip3 install meson
+              meson --cross-file=sys/winnt/winnt.cross --buildtype=release build
+              ninja -C build
+              DESTDIR=/tmp/windows-mingw-meson-cross ninja -C build install
+              tar -C /tmp -c windows-mingw-meson-cross | gzip -9 > windows-mingw-meson-cross-$TRAVIS_COMMIT.tar.gz
+    - os: linux
+      env: DESCR=msdos-djgpp-meson-cross
+      services: docker
+      script: docker run --rm -v `pwd`:/root/NetHack -w /root/NetHack --rm -i centos:8 sh -xe < sys/msdos/ci.sh
+    - os: linux
       env: DESCR=linux-xenial-gcc HINTS=linux
       compiler: gcc
       script: "cd sys/unix/ && sh setup.sh hints/$HINTS && cd ../../ && make install"
@@ -78,12 +127,13 @@ matrix:
 #     install: choco install mingw
       env: DESCR=windows-mingw
       script:
-        - git clone --depth 1 https://github.com/wmcbrine/PDCurses.git ../pdcurses
         - export ADD_CURSES=Y
-        - export PDCURSES_TOP=../../pdcurses
+        - export PDCURSES_TOP=../pdcurses
         - cd src
         - cp ../sys/winnt/Makefile.gcc ./Makefile
         - mingw32-make install
+
+
   exclude:
 #    - os: osx
 #      osx_image: xcode10.3
@@ -105,13 +155,17 @@ notifications:
 deploy:
   provider: releases
   api_key:
-    secure: "U0Dt2CXrcG8Yi4taUCT/6AnM+0IJtdCv6IVG/2rGooUY3pZjNWE9XDM6X9ZeAmbI79aN6FPTppjUf3KbB/upYeJt+8mrjnxEk/ZTO1xXDDW8iL/DiqnczoFsMGmPsTM+Fkeak8bu0SifI7Qkx9i1N+zOyl2VdlaxGjchPfl/OJw2jcQs7rOGRfr23/rapZKTcFq+BFlxMiIHa0dXbCJ9vagdlyAeclOCtPjw1VoH/Cb/+0/Xlx2MFPncw4/1P+bO/fPantHyehh3/WCDVCnI4M7ftONpsTVRrQ+Hml89teUH9/1xXUOpbCeVghWr1rumLcQzMqLKNj2lP/gm9co2/DKpxiUPUzBfO/9Jvl1CNoEwPYQBRNb38kggDvAT4vKX38Oi5sZvumFEO4L0y7o4cW6SA4/CYIykfxOdkrryt8ltfWwopdy3I/DothYw31vJ9GsZOCAShFRAy3hJxYUbHhT+7SDUBadVSEkb4UqxQ+7zntAVT+Lp4DXLAfvsWxZGrQoP/IrWAgNOLRKILubpzh+YpadMH3Ygha2JRAeJAEZ3DnXf3vOOAucWnk4mNXDbW35GTDTAJDWMvddZCfsrUI/uHxgaRjFs9fLX1X5tqhGnsr27sKLWyX+zrIPVV0TPl3AzYPAf6Bc8Okeu+JEGQERvvgSasCuYcmhgYznBVJI="
-  file_glob: true
-  file: 
-    - "$TRAVIS_TAG.x86.zip"
+    secure: RhyzqLxP4Y8gxJt4zs/6sQykQ4mNAxF0eq82VbkPPm3vG/+Le4sCI8cBAK1EwBZ5zxvN4WX+A+5mderSnXPFWHouyl7A5hcq/d8WHVu97KPMHCUEds6Y2ixpG+eIC/97HZGy4CL4DHkCmBjZePv9yScEnLYN6RzDKI9u2rZA980NByjIxgoj3Cr8vjB+Mm+iXRICU0PaO7LDvlyz1w9Isue0lNj25oHfIOxuQChTJvgwwe+Kj/EGl991CYlbIKew3usOPLAlk31cImZJLz6MXO5iTWdSngnxp5l9INzm8auKhIOQrZEPWUGFKy266qpBCam1cT4INOxKCyuX8WX2/skmcdNyuiWYiZCtDyr6zCeR34Hx1qnNEfTSski0yzhSowq18ujVAgZV+cUrUJlyw3sDaa/euyqmrKLIhdmMxfHgeUvb2sGGMF80ZP+qzsKs3OKM0KlNF6fcmJnUympeWtu5mZGmfu8iWUyLx0bhRESbxbBvaRJs85fRVsZ/XKCBosDQGTrPguhQbxzz4paTbAj5wbF9jUOl+am99dYDYulo2KILkye03vdd+/t8+DKdfizHhYVq0FBzt2V28Nsa/vnbaGuWBsgWS3xt6jo5r0UCLu+cdy5+ifdhvDeru0QxLjB2QLYcaMDj9GIfDiSexBx1ZEOGYpVGxnMV8tO8qfE=
+  file:
+    - linux-xenial-gcc-meson-$TRAVIS_COMMIT.tar.gz
+    - windows-mingw-meson-cross-$TRAVIS_COMMIT.tar.gz
   skip_cleanup: true
-  on:
-    tags: true
   prerelease: true
+  draft: true
+  on:
+    all_branches: true
+  overwrite: true
   name: "Pre-Release build of NetHack 3.6"
   body: "This is an auto generated Pre-Release build of NetHack 3.6"
+#
+cache: ccache

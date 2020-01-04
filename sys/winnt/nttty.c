@@ -19,8 +19,13 @@
 #include "winos.h"
 #include "hack.h"
 #include "wintty.h"
+#ifdef MESON
+#include <sys/types.h>
+#include <sys/stat.h>
+#else
 #include <sys\types.h>
 #include <sys\stat.h>
+#endif
 
 extern boolean getreturn_enabled; /* from sys/share/pcsys.c */
 extern int redirect_stdout;

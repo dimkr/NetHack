@@ -102,10 +102,17 @@ static const char SCCS_Id[] UNUSED = "@(#)makedefs.c\t3.6\t2019/12/17";
 #define DATA_TEMPLATE "..\\dat\\%s"
 #define DATA_IN_TEMPLATE "..\\dat\\%s"
 #else /* not AMIGA, MAC, or OS2 */
+#ifdef MESON
+#define INCLUDE_TEMPLATE "%s"
+#define SOURCE_TEMPLATE "%s"
+#define DGN_TEMPLATE "%s" /* where dungeon.pdf file goes */
+#define DATA_TEMPLATE "%s"
+#else
 #define INCLUDE_TEMPLATE "../include/%s"
 #define SOURCE_TEMPLATE "../src/%s"
-#define DGN_TEMPLATE "../dat/%s" /* where dungeon.pdf file goes */
+#define DGN_TEMPLATE "../dat/%s"
 #define DATA_TEMPLATE "../dat/%s"
+#endif
 #define DATA_IN_TEMPLATE "../dat/%s"
 #endif /* else !OS2 */
 #endif /* else !MAC */

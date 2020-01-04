@@ -216,7 +216,7 @@ typedef uchar nhsym;
 #endif
 
 #if defined(MICRO)
-#if !defined(AMIGA) && !defined(TOS) && !defined(OS2_HPFS)
+#if !defined(AMIGA) && !defined(TOS) && !defined(OS2_HPFS) && !defined(MESON)
 #define SHORT_FILENAMES /* filenames are 8.3 */
 #endif
 #endif
