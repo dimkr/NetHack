@@ -150,8 +150,21 @@ endif
 compiled_resources = []
 resources = meson.get_cross_property('resources', '')
 if resources != ''
+	uudecode = executable('uudecode',
+	                      'sys/share/uudecode.c',
+	                      include_directories: includes)
+
+	nethack_ico = custom_target('nethack_ico',
+	                            output: 'NetHack.ICO',
+	                            input: 'sys/winnt/nhico.uu',
+	                            command : [uudecode, '@INPUT@'])
+
 	windows = import('windows')
-	compiled_resources += [windows.compile_resources(resources)]
+	compiled_resources += [
+		windows.compile_resources(resources,
+		                          include_directories: include_directories('.'),
+		                          depends: nethack_ico)
+	]
 endif
 
 nethack = executable('nethack',
