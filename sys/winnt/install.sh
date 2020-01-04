@@ -27,3 +27,8 @@ for i in perm record logfile xlogfile
 do
 	touch $DESTDIR/$i
 done
+
+for i in libstdc++-6.dll libgcc_s_seh-1.dll
+do
+	install -m 644 /usr/lib/gcc/x86_64-w64-mingw32/*-win32/$i $DESTDIR/$i
+done

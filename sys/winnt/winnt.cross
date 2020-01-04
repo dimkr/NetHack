@@ -32,5 +32,5 @@ win_srcs = ['pdcurses/wincon/pdcclip.c', 'pdcurses/wincon/pdcdisp.c', 'pdcurses/
 regex_srcs = ['sys/share/cppregex.cpp']
 c_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']
 cpp_args = ['-DWIN32', '-D_WIN32', '-DWIN32CON', '-D_WIN32_IE=0x0400', '-D_WIN32_WINNT=0x0601', '-DWINVER=0x0601', '-DSAFEPROCS', '-DGUISTUB']
-c_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32', '-static-libgcc']
-cpp_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32', '-static-libgcc', '-static-libstdc++']
+c_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32']
+cpp_link_args = ['-lgdi32', '-lwinmm', '-lshell32', '-lole32', '-luuid', '-lbcrypt', '-lws2_32']
